@@ -4,7 +4,7 @@
   "language_name": "Bahasa Indonesia",
   "language_changed": "Bahasa diubah",
   "change_language": "Ubah Bahasa",
-  
+
   "loading": "Memuat...",
   "welcome": "Selamat datang di Notepad Terdesentralisasi",
   "passphrase": "Frasa Sandi",
@@ -14,7 +14,7 @@
   "confirm_passphrase": "Konfirmasi Frasa Sandi",
   "create_account": "Buat Akun",
   "back_to_login": "Kembali ke Login",
-  
+
   "enter_passphrase": "Masukkan frasa sandi Anda",
   "invalid_passphrase": "Frasa sandi tidak valid",
   "unlock_error": "Gagal membuka kunci aplikasi",
@@ -24,7 +24,7 @@
   "account_created": "Akun berhasil dibuat",
   "create_account_error": "Gagal membuat akun",
   "welcome_back": "Selamat datang kembali!",
-  
+
   "notes": "Catatan",
   "todos": "Tugas",
   "add_new": "Tambah Baru",
@@ -36,11 +36,86 @@
   "import": "Impor Data",
   "about": "Tentang",
   "settings": "Pengaturan",
-  
+
+  "wallet_connect": "Hubungkan Wallet",
+  "wallet_connected": "Wallet terhubung",
+  "wallet_error": "Gagal menghubungkan wallet",
+  "wallet_account_created": "Akun wallet baru dibuat",
+  "copy_phrase": "Salin Frasa",
+  "download_phrase": "Unduh Frasa",
+  "recovery_phrase_copied": "Frasa pemulihan disalin ke clipboard",
+  "passphrase_generated": "Passphrase aman telah dibuat",
+
+  "about_description": "Aplikasi notepad dan todo terdesentralisasi yang berfokus pada privasi dan berjalan sepenuhnya di browser Anda. Data Anda dienkripsi dan dapat disinkronkan antar perangkat menggunakan teknologi peer-to-peer.",
+  "feature_encryption": "Enkripsi End-to-End",
+  "feature_encryption_desc": "Semua data dienkripsi secara lokal",
+  "feature_offline": "Offline First",
+  "feature_offline_desc": "Bekerja tanpa internet",
+  "feature_p2p": "Sinkronisasi P2P",
+  "feature_p2p_desc": "Sinkronisasi terdesentralisasi",
+  "feature_recovery": "Frasa Pemulihan",
+  "feature_recovery_desc": "Backup seperti MetaMask",
+
+  "documentation": "Dokumentasi",
+  "getting_started": "Memulai",
+  "step_1": "1. Buat Akun",
+  "step_1_desc": "Klik 'Buat Akun Baru' dan buat passphrase yang aman atau gunakan fitur auto-generate.",
+  "step_2": "2. Simpan Frasa Pemulihan",
+  "step_2_desc": "Tulis dan simpan 12 kata frasa pemulihan Anda dengan aman. Anda akan membutuhkannya untuk memulihkan akun.",
+  "step_3": "3. Mulai Membuat",
+  "step_3_desc": "Buat catatan dan todo. Semua otomatis dienkripsi dan disimpan secara lokal.",
+
+  "notes_feature": "Catatan",
+  "notes_feature_desc": "Buat catatan teks kaya dengan fitur auto-save.",
+  "todos_feature": "Daftar Tugas",
+  "todos_feature_desc": "Kelola tugas dengan prioritas dan tanggal jatuh tempo.",
+  "search_feature": "Pencarian",
+  "search_feature_desc": "Temukan catatan dan tugas dengan cepat menggunakan pencarian teks lengkap.",
+  "export_feature": "Ekspor/Impor",
+  "export_feature_desc": "Cadangkan dan pulihkan data Anda dalam format JSON.",
+  "keyboard_shortcuts": "Pintasan Keyboard",
+  "save_shortcut": "Simpan item saat ini",
+  "new_shortcut": "Buat item baru",
+  "delete_shortcut": "Hapus item saat ini",
+  "search_shortcut": "Fokus pencarian",
+  "security": "Keamanan",
+  "security_desc": "Data Anda dilindungi menggunakan enkripsi AES standar industri dengan derivasi kunci PBKDF2. Semua enkripsi terjadi secara lokal di browser Anda.",
+  "security_warning": "Penting:",
+  "security_warning_desc": "Jaga frasa pemulihan Anda tetap aman! Jika Anda kehilangannya dan lupa kata sandi, data Anda tidak dapat dipulihkan.",
+  "feature_encryption": "Enkripsi End-to-End",
+  "feature_encryption_desc": "Semua data dienkripsi secara lokal",
+  "feature_offline": "Offline First",
+  "feature_offline_desc": "Bekerja tanpa internet",
+  "feature_p2p": "Sinkronisasi P2P",
+  "feature_p2p_desc": "Sinkronisasi terdesentralisasi",
+  "feature_recovery": "Frasa Pemulihan",
+  "feature_recovery_desc": "Backup seperti MetaMask",
+  "documentation": "Dokumentasi",
+  "getting_started": "Memulai",
+  "step_1": "1. Buat Akun",
+  "step_1_desc": "Klik 'Buat Akun Baru' dan buat passphrase yang aman atau gunakan fitur auto-generate.",
+  "step_2": "2. Simpan Frasa Pemulihan",
+  "step_2_desc": "Tulis dan simpan 12 kata frasa pemulihan Anda dengan aman. Anda akan membutuhkannya untuk memulihkan akun.",
+  "step_3": "3. Mulai Membuat",
+  "step_3_desc": "Buat catatan dan todo. Semua otomatis dienkripsi dan disimpan secara lokal.",
+  "notes_feature": "Catatan",
+  "notes_feature_desc": "Buat catatan teks kaya dengan fitur auto-save.",
+
+  "keyboard_shortcuts": "Shortcut Keyboard",
+  "save_shortcut": "Simpan item saat ini",
+  "new_shortcut": "Buat item baru",
+  "delete_shortcut": "Hapus item saat ini",
+  "search_shortcut": "Fokus ke pencarian",
+
+  "security": "Keamanan",
+  "security_desc": "Data Anda dilindungi menggunakan enkripsi AES standar industri dengan derivasi kunci PBKDF2. Semua enkripsi terjadi secara lokal di browser Anda.",
+  "security_warning": "Penting:",
+  "security_warning_desc": "Jaga frasa pemulihan Anda dengan aman! Jika hilang dan lupa passphrase, data Anda tidak dapat dipulihkan.",
+
   "welcome_title": "Selamat datang di notepad aman Anda",
   "welcome_subtitle": "Buat catatan atau tugas pertama Anda untuk memulai",
   "create_first_note": "Buat Catatan Pertama",
-  
+
   "last_modified": "Terakhir diubah",
   "created": "Dibuat",
   "due_date": "Tanggal Jatuh Tempo",
@@ -48,12 +123,12 @@
   "priority_high": "Tinggi",
   "priority_medium": "Sedang",
   "priority_low": "Rendah",
-  
+
   "online": "Online",
   "offline": "Offline",
   "syncing": "Sinkronisasi",
   "connected_peers": "Rekan terhubung",
-  
+
   "no_notes": "Belum ada catatan",
   "no_todos": "Belum ada tugas",
   "note_saved": "Catatan tersimpan",
@@ -63,17 +138,17 @@
   "todo_deleted": "Tugas dihapus",
   "todo_title_required": "Judul tugas diperlukan",
   "task_completed": "Tugas selesai",
-  
+
   "delete_note": "Hapus Catatan",
   "delete_note_confirm": "Apakah Anda yakin ingin menghapus catatan ini?",
   "delete_todo": "Hapus Tugas",
   "delete_todo_confirm": "Apakah Anda yakin ingin menghapus tugas ini?",
-  
+
   "export_success": "Data berhasil diekspor",
   "export_error": "Gagal mengekspor data",
   "import_success": "Data berhasil diimpor",
   "import_error": "Gagal mengimpor data",
-  
+
   "app_locked": "Aplikasi dikunci untuk keamanan",
   "sync_started": "Sinkronisasi dimulai",
   "note_synced": "Catatan tersinkronisasi",
@@ -83,24 +158,24 @@
   "sync_complete": "Sinkronisasi selesai",
   "sync_failed": "Sinkronisasi gagal",
   "sync_data_cleared": "Data sinkronisasi dihapus",
-  
+
   "about_description": "Aplikasi catatan dan tugas terdesentralisasi yang fokus pada privasi yang menjaga data Anda tetap aman dan pribadi.",
   "features": "Fitur",
   "client_side_encryption": "Enkripsi sisi klien",
   "offline_capable": "Dapat digunakan offline",
   "decentralized_sync": "Sinkronisasi terdesentralisasi",
   "privacy_focused": "Fokus pada privasi",
-  
+
   "keyboard_shortcuts": "Pintasan Keyboard",
   "new_item": "Item baru",
   "save_item": "Simpan item",
   "focus_search": "Fokus pencarian",
   "lock_app": "Kunci aplikasi",
-  
+
   "task_reminder": "Pengingat Tugas",
   "task_due_now": "Tugas jatuh tempo sekarang",
   "task_due_tomorrow": "Tugas jatuh tempo besok",
-  
+
   "today": "Hari ini",
   "yesterday": "Kemarin",
   "days_ago": "hari yang lalu",
@@ -112,12 +187,12 @@
   "hours": "jam",
   "minute": "menit",
   "minutes": "menit",
-  
+
   "clear_completed": "Hapus yang Selesai",
   "clear_completed_confirm": "Apakah Anda yakin ingin menghapus semua tugas yang selesai?",
   "tasks": "tugas",
   "completed_todos_cleared": "Tugas yang selesai dihapus",
-  
+
   "app_installed": "Aplikasi berhasil diinstal!",
   "install_app": "Instal Aplikasi",
   "install": "Instal",
@@ -133,5 +208,33 @@
   "persistent_storage_granted": "Penyimpanan permanen diaktifkan",
   "add_to_home_screen": "Tambahkan ke Layar Beranda",
   "ios_install_instructions": "Untuk menginstal aplikasi ini di perangkat iOS Anda, ketuk tombol bagikan lalu \"Tambahkan ke Layar Beranda\".",
-  "got_it": "Mengerti"
+  "got_it": "Mengerti",
+  "recovery_phrase_option": "Pulihkan dari Frasa",
+  "recovery_phrase_title": "Frasa Pemulihan Anda",
+  "recovery_phrase_description": "Simpan 12 kata ini secara berurutan. Anda membutuhkannya untuk memulihkan akun Anda.",
+  "phrase_saved_confirm": "Saya telah menyimpan frasa pemulihan saya dengan aman",
+  "confirm_phrase": "Konfirmasi & Buat Akun",
+  "back_to_setup": "Kembali ke Pengaturan",
+  "recover_account_title": "Pulihkan Akun Anda",
+  "recovery_import_description": "Masukkan frasa pemulihan 12 kata untuk memulihkan akun Anda.",
+  "recovery_phrase": "Frasa Pemulihan",
+  "new_passphrase": "Frasa Sandi Baru",
+  "confirm_new_passphrase": "Konfirmasi Frasa Sandi Baru",
+  "recover_account": "Pulihkan Akun",
+  "backup_phrase": "Cadangan Frasa",
+  "recovery_phrase_copied": "Frasa pemulihan disalin ke clipboard",
+  "recovery_phrase_backup": "Cadangan Frasa Pemulihan",
+  "recovery_phrase_warning": "⚠️ Peringatan: Simpan frasa pemulihan ini di tempat yang aman. Siapa pun yang memiliki akses dapat memulihkan akun Anda.",
+  "phrase_mismatch": "Frasa sandi tidak cocok",
+  "phrase_invalid": "Frasa pemulihan tidak valid",
+  "phrase_required": "Frasa pemulihan diperlukan",
+  "account_recovered": "Akun berhasil dipulihkan",
+  "connect_wallet": "Hubungkan Wallet",
+  "wallet_connected": "Wallet berhasil terhubung",
+  "wallet_error": "Gagal menghubungkan wallet",
+  "wallet_sign": "Tanda Tangan Pesan",
+  "wallet_auth": "Autentikasi Wallet",
+  "wallet_auth_desc": "Tanda tangani pesan dengan wallet Anda untuk autentikasi",
+  "copy_phrase": "Salin Frasa",
+  "download_phrase": "Unduh Frasa"
 }

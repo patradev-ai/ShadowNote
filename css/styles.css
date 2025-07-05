@@ -10,6 +10,54 @@
   transition: all 0.2s ease-in-out;
 }
 
+/* Enhanced gradients and animations */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Recovery phrase card styling */
+.phrase-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #667eea 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 8s ease infinite;
+  border-radius: 12px;
+  padding: 2px;
+}
+
+.phrase-card-inner {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  height: 100%;
+}
+
+.dark .phrase-card-inner {
+  background: #374151;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating elements */
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
@@ -201,6 +249,80 @@
 
 .dark .text-gray-500 {
   color: #6b7280;
+}
+
+.dark .text-gray-400 {
+  color: #9ca3af;
+}
+
+.dark .text-gray-300 {
+  color: #d1d5db;
+}
+
+.dark .bg-gray-50 {
+  background-color: #374151;
+}
+
+.dark .bg-gray-100 {
+  background-color: #4b5563;
+}
+
+.dark .bg-gray-700 {
+  background-color: #1f2937;
+}
+
+.dark .bg-gray-800 {
+  background-color: #111827;
+}
+
+.dark .bg-gray-900 {
+  background-color: #0f172a;
+}
+
+.dark .border-gray-300 {
+  border-color: #4b5563;
+}
+
+.dark .border-gray-700 {
+  border-color: #374151;
+}
+
+/* Input and form styles in dark mode */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #3b82f6;
+  background-color: #374151;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Button adjustments */
+.dark .bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+.dark .bg-green-500 {
+  background-color: #10b981;
+}
+
+.dark .bg-red-500 {
+  background-color: #ef4444;
+}
+
+.dark .bg-yellow-500 {
+  background-color: #f59e0b;
 }
 
 /* Loading animation */

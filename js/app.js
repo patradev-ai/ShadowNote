@@ -50,6 +50,16 @@ class DecentralizedNotepadApp {
     document.getElementById('setup-new-btn').addEventListener('click', () => this.showSetupForm());
     document.getElementById('create-account-btn').addEventListener('click', () => this.handleCreateAccount());
     document.getElementById('back-to-login-btn').addEventListener('click', () => this.showLoginForm());
+    document.getElementById('wallet-connect-btn').addEventListener('click', () => this.handleWalletConnect());
+    
+    // Recovery phrase
+    document.getElementById('recovery-phrase-btn').addEventListener('click', () => this.showRecoveryImportForm());
+    document.getElementById('back-to-setup-btn').addEventListener('click', () => this.showSetupForm());
+    document.getElementById('back-to-setup-2-btn').addEventListener('click', () => this.showSetupForm());
+    document.getElementById('confirm-phrase-btn').addEventListener('click', () => this.handleConfirmPhrase());
+    document.getElementById('recover-account-btn').addEventListener('click', () => this.handleRecoverAccount());
+    document.getElementById('phrase-saved-checkbox').addEventListener('change', (e) => this.handlePhraseSavedChange(e));
+    document.getElementById('backup-phrase-btn').addEventListener('click', () => this.showBackupPhrase());
     
     // Main navigation
     document.getElementById('notes-tab').addEventListener('click', () => this.switchMode('notes'));
@@ -90,6 +100,17 @@ class DecentralizedNotepadApp {
     document.getElementById('confirm-passphrase-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.handleCreateAccount();
     });
+    
+    // Generate passphrase button
+    document.getElementById('generate-passphrase-btn').addEventListener('click', () => this.generatePassphrase());
+    
+    // About modal
+    document.getElementById('about-btn').addEventListener('click', () => this.showAbout());
+    document.getElementById('close-about-btn').addEventListener('click', () => this.closeAbout());
+    
+    // Docs modal  
+    document.getElementById('docs-btn').addEventListener('click', () => this.showDocs());
+    document.getElementById('close-docs-btn').addEventListener('click', () => this.closeDocs());
   }
 
   setupInactivityDetection() {
@@ -188,13 +209,13 @@ class DecentralizedNotepadApp {
     }
 
     try {
-      // Create new user
-      await CryptoManager.createUser(passphrase);
-      CryptoManager.setPassphrase(passphrase);
-      
-      this.isAuthenticated = true;
-      this.showMainApp();
-      UIManager.showNotification(LanguageManager.get('account_created'), 'success');
+      const result = await CryptoManager.createUser(passphrase);
+      if (result.success) {
+        this.currentRecoveryPhrase = result.recoveryPhrase;
+        this.showRecoverySetupForm();
+      } else {
+        UIManager.showNotification(LanguageManager.get('create_account_error'), 'error');
+      }
     } catch (error) {
       console.error('Create account error:', error);
       UIManager.showNotification(LanguageManager.get('create_account_error'), 'error');
@@ -203,6 +224,261 @@ class DecentralizedNotepadApp {
     // Clear inputs
     document.getElementById('new-passphrase-input').value = '';
     document.getElementById('confirm-passphrase-input').value = '';
+  }
+
+  showRecoverySetupForm() {
+    this.hideAllForms();
+    document.getElementById('recovery-setup-form').classList.remove('hidden');
+    
+    // Display recovery phrase
+    const phraseDisplay = document.getElementById('recovery-phrase-display');
+    const words = this.currentRecoveryPhrase.split(' ');
+    phraseDisplay.innerHTML = '';
+    
+    words.forEach((word, index) => {
+      const wordElement = document.createElement('div');
+      wordElement.className = 'phrase-card-inner text-center text-sm floating';
+      wordElement.innerHTML = `<span class="text-xs text-gray-500 dark:text-gray-400">${index + 1}</span><br><strong>${word}</strong>`;
+      phraseDisplay.appendChild(wordElement);
+    });
+    
+    // Add copy and download buttons
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'flex gap-2 mt-4';
+    buttonsDiv.innerHTML = `
+      <button id="copy-phrase-btn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-sm">
+        <i class="fas fa-copy mr-2"></i>
+        ${LanguageManager.get('copy_phrase')}
+      </button>
+      <button id="download-phrase-btn" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg text-sm">
+        <i class="fas fa-download mr-2"></i>
+        ${LanguageManager.get('download_phrase')}
+      </button>
+    `;
+    
+    // Insert buttons after the phrase display
+    const phraseContainer = document.getElementById('recovery-phrase-display').parentNode;
+    phraseContainer.insertBefore(buttonsDiv, document.getElementById('recovery-phrase-display').nextSibling);
+    
+    // Add event listeners for copy and download
+    document.getElementById('copy-phrase-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(this.currentRecoveryPhrase);
+      UIManager.showNotification(LanguageManager.get('recovery_phrase_copied'), 'success');
+    });
+    
+    document.getElementById('download-phrase-btn').addEventListener('click', () => {
+      const blob = new Blob([this.currentRecoveryPhrase], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'recovery-phrase.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  showRecoveryImportForm() {
+    this.hideAllForms();
+    document.getElementById('recovery-import-form').classList.remove('hidden');
+  }
+
+  handlePhraseSavedChange(e) {
+    const confirmBtn = document.getElementById('confirm-phrase-btn');
+    if (e.target.checked) {
+      confirmBtn.disabled = false;
+      confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else {
+      confirmBtn.disabled = true;
+      confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+  }
+
+  async handleConfirmPhrase() {
+    try {
+      CryptoManager.setPassphrase(document.getElementById('new-passphrase-input').value);
+      this.isAuthenticated = true;
+      UIManager.showNotification(LanguageManager.get('account_created'), 'success');
+      this.showMainApp();
+    } catch (error) {
+      console.error('Confirm phrase error:', error);
+      UIManager.showNotification(LanguageManager.get('create_account_error'), 'error');
+    }
+  }
+
+  async handleRecoverAccount() {
+    const recoveryPhrase = document.getElementById('recovery-phrase-input').value.trim();
+    const newPassphrase = document.getElementById('recovery-new-passphrase').value;
+    const confirmPassphrase = document.getElementById('recovery-confirm-passphrase').value;
+    
+    if (!recoveryPhrase || !newPassphrase || !confirmPassphrase) {
+      UIManager.showNotification(LanguageManager.get('fill_all_fields'), 'error');
+      return;
+    }
+    
+    if (newPassphrase !== confirmPassphrase) {
+      UIManager.showNotification(LanguageManager.get('phrase_mismatch'), 'error');
+      return;
+    }
+    
+    if (newPassphrase.length < 8) {
+      UIManager.showNotification(LanguageManager.get('passphrase_too_short'), 'error');
+      return;
+    }
+    
+    try {
+      const result = await CryptoManager.recoverFromPhrase(recoveryPhrase, newPassphrase);
+      if (result.success) {
+        UIManager.showNotification(LanguageManager.get('account_recovered'), 'success');
+        CryptoManager.setPassphrase(newPassphrase);
+        this.isAuthenticated = true;
+        this.showMainApp();
+      } else {
+        UIManager.showNotification(result.error || LanguageManager.get('phrase_invalid'), 'error');
+      }
+    } catch (error) {
+      console.error('Recovery error:', error);
+      UIManager.showNotification(LanguageManager.get('phrase_invalid'), 'error');
+    }
+  }
+
+  generatePassphrase() {
+    const generatedPassphrase = CryptoManager.generatePassphrase();
+    const passphraseInput = document.getElementById('new-passphrase-input');
+    const confirmInput = document.getElementById('confirm-passphrase-input');
+    
+    passphraseInput.type = 'text';
+    passphraseInput.value = generatedPassphrase;
+    confirmInput.value = generatedPassphrase;
+    
+    UIManager.showNotification(LanguageManager.get('passphrase_generated'), 'success');
+    
+    // Hide passphrase after 5 seconds
+    setTimeout(() => {
+      passphraseInput.type = 'password';
+    }, 5000);
+  }
+
+  async handleWalletConnect() {
+    try {
+      const result = await CryptoManager.connectWallet();
+      if (result.success) {
+        UIManager.showNotification(LanguageManager.get('wallet_connected') + `: ${result.address.slice(0, 6)}...${result.address.slice(-4)}`, 'success');
+        
+        // Sign a message for authentication
+        const message = `Authenticate with Decentralized Notepad - ${result.address}`;
+        const signResult = await CryptoManager.signMessage(message);
+        
+        if (signResult.success) {
+          // Use wallet address as passphrase for simplicity
+          const walletPassphrase = result.address;
+          
+          // Store wallet address for future reference
+          localStorage.setItem('dnp_wallet_address', result.address);
+          
+          // Check if wallet account exists
+          const walletAccountKey = `dnp_wallet_${result.address}`;
+          const existingAccount = localStorage.getItem(walletAccountKey);
+          
+          if (existingAccount) {
+            // Load existing wallet account
+            const accountData = JSON.parse(existingAccount);
+            CryptoManager.setPassphrase(walletPassphrase);
+            CryptoManager.salt = accountData.salt;
+            CryptoManager.userKeyHash = accountData.keyHash;
+            this.isAuthenticated = true;
+            this.showMainApp();
+          } else {
+            // Create new wallet account
+            const createResult = await CryptoManager.createUser(walletPassphrase);
+            if (createResult.success) {
+              // Store wallet-specific account data
+              const accountData = {
+                salt: CryptoManager.salt,
+                keyHash: CryptoManager.userKeyHash,
+                createdAt: new Date().toISOString(),
+                address: result.address
+              };
+              localStorage.setItem(walletAccountKey, JSON.stringify(accountData));
+              
+              this.isAuthenticated = true;
+              this.showMainApp();
+              UIManager.showNotification(LanguageManager.get('wallet_account_created'), 'success');
+            }
+          }
+        }
+      } else {
+        UIManager.showNotification(result.error || LanguageManager.get('wallet_error'), 'error');
+      }
+    } catch (error) {
+      console.error('Wallet connect error:', error);
+      UIManager.showNotification(LanguageManager.get('wallet_error'), 'error');
+    }
+  }
+
+  async showBackupPhrase() {
+    try {
+      const result = await CryptoManager.backupRecoveryPhrase();
+      if (result.success) {
+        const modal = UIManager.showModal(
+          LanguageManager.get('recovery_phrase_backup'),
+          `
+            <div class="mb-4">
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">${LanguageManager.get('recovery_phrase_warning')}</p>
+              <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mb-4">
+                <div class="grid grid-cols-3 gap-2" id="backup-phrase-display">
+                  ${result.recoveryPhrase.split(' ').map((word, index) => 
+                    `<div class="bg-white dark:bg-gray-600 p-2 rounded border text-center text-sm">
+                      <span class="text-xs text-gray-500 dark:text-gray-400">${index + 1}</span><br>
+                      <strong>${word}</strong>
+                    </div>`
+                  ).join('')}
+                </div>
+              </div>
+            </div>
+          `,
+          [
+            {
+              text: LanguageManager.get('copy_phrase'),
+              class: 'bg-blue-500 hover:bg-blue-600 text-white',
+              action: () => {
+                navigator.clipboard.writeText(result.recoveryPhrase);
+                UIManager.showNotification(LanguageManager.get('recovery_phrase_copied'), 'success');
+              }
+            },
+            {
+              text: LanguageManager.get('download_phrase'),
+              class: 'bg-green-500 hover:bg-green-600 text-white',
+              action: () => {
+                const blob = new Blob([result.recoveryPhrase], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'recovery-phrase.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+              }
+            },
+            {
+              text: LanguageManager.get('cancel'),
+              class: 'bg-gray-500 hover:bg-gray-600 text-white',
+              action: () => UIManager.closeModal()
+            }
+          ]
+        );
+      } else {
+        UIManager.showNotification(result.error || 'Failed to backup phrase', 'error');
+      }
+    } catch (error) {
+      console.error('Backup phrase error:', error);
+      UIManager.showNotification('Failed to backup phrase', 'error');
+    }
+  }
+
+  hideAllForms() {
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('setup-form').classList.add('hidden');
+    document.getElementById('recovery-setup-form').classList.add('hidden');
+    document.getElementById('recovery-import-form').classList.add('hidden');
   }
 
   showMainApp() {

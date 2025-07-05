@@ -38,29 +38,42 @@
 
     <!-- Login/Setup Screen -->
     <div id="auth-screen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-40 hidden">
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg max-w-md w-full mx-4">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl max-w-md w-full mx-4 shadow-2xl border border-gray-200 dark:border-gray-700">
             <h2 class="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white" data-lang="welcome">Welcome to Decentralized Notepad</h2>
             
             <div id="login-form">
                 <div class="mb-4">
                     <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="passphrase">Passphrase:</label>
-                    <input type="password" id="passphrase-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Enter your passphrase">
+                    <input type="password" id="passphrase-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200" placeholder="Enter your passphrase">
                 </div>
                 
-                <button id="unlock-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md mb-4">
+                <button id="unlock-btn" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg mb-4 transform hover:scale-105 transition-all duration-200 shadow-lg">
                     <i class="fas fa-unlock mr-2"></i>
                     <span data-lang="unlock">Unlock</span>
                 </button>
+
+                <div class="text-center mb-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">Or</div>
+                    <button id="wallet-connect-btn" class="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-3 px-4 rounded-lg transform hover:scale-105 transition-all duration-200 shadow-lg">
+                        <i class="fab fa-ethereum mr-2"></i>
+                        <span data-lang="connect_wallet">Connect Wallet</span>
+                    </button>
+                </div>
                 
                 <div class="text-center">
-                    <button id="setup-new-btn" class="text-blue-500 hover:text-blue-600 text-sm" data-lang="setup_new">Setup New Account</button>
+                    <button id="setup-new-btn" class="text-blue-500 hover:text-blue-600 text-sm font-medium" data-lang="setup_new">Setup New Account</button>
                 </div>
             </div>
 
             <div id="setup-form" class="hidden">
                 <div class="mb-4">
                     <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="create_passphrase">Create Passphrase:</label>
-                    <input type="password" id="new-passphrase-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Create a strong passphrase">
+                    <div class="flex gap-2">
+                        <input type="password" id="new-passphrase-input" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Create a strong passphrase">
+                        <button type="button" id="generate-passphrase-btn" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm" title="Generate secure passphrase">
+                            <i class="fas fa-dice"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="mb-4">
@@ -68,13 +81,77 @@
                     <input type="password" id="confirm-passphrase-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Confirm your passphrase">
                 </div>
                 
-                <button id="create-account-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md mb-4">
+                <button id="create-account-btn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-4 rounded-lg mb-4 transform hover:scale-105 transition-all duration-200 shadow-lg">
                     <i class="fas fa-plus mr-2"></i>
                     <span data-lang="create_account">Create Account</span>
                 </button>
                 
+                <div class="text-center mb-4">
+                    <button id="recovery-phrase-btn" class="text-blue-500 hover:text-blue-600 text-sm" data-lang="recovery_phrase_option">Recover from Phrase</button>
+                </div>
+                
                 <div class="text-center">
                     <button id="back-to-login-btn" class="text-blue-500 hover:text-blue-600 text-sm" data-lang="back_to_login">Back to Login</button>
+                </div>
+            </div>
+
+            <!-- Recovery Phrase Setup -->
+            <div id="recovery-setup-form" class="hidden">
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2" data-lang="recovery_phrase_title">Your Recovery Phrase</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4" data-lang="recovery_phrase_description">Save these 12 words in order. You'll need them to recover your account.</p>
+                    
+                    <div id="recovery-phrase-display" class="grid grid-cols-3 gap-2 mb-4 p-4 phrase-card">
+                        <!-- Recovery phrase words will be inserted here -->
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="phrase-saved-checkbox" class="mr-2">
+                            <span class="text-sm text-gray-700 dark:text-gray-300" data-lang="phrase_saved_confirm">I have saved my recovery phrase securely</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button id="confirm-phrase-btn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-4 rounded-lg mb-4 transform hover:scale-105 transition-all duration-200 shadow-lg opacity-50 cursor-not-allowed" disabled>
+                    <i class="fas fa-check mr-2"></i>
+                    <span data-lang="confirm_phrase">Confirm & Create Account</span>
+                </button>
+                
+                <div class="text-center">
+                    <button id="back-to-setup-btn" class="text-blue-500 hover:text-blue-600 text-sm" data-lang="back_to_setup">Back to Setup</button>
+                </div>
+            </div>
+
+            <!-- Recovery Phrase Import -->
+            <div id="recovery-import-form" class="hidden">
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2" data-lang="recover_account_title">Recover Your Account</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4" data-lang="recovery_import_description">Enter your 12-word recovery phrase to restore your account.</p>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="recovery_phrase">Recovery Phrase:</label>
+                        <textarea id="recovery-phrase-input" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="word1 word2 word3 ..."></textarea>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="new_passphrase">New Passphrase:</label>
+                        <input type="password" id="recovery-new-passphrase" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Create a new passphrase">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="confirm_new_passphrase">Confirm New Passphrase:</label>
+                        <input type="password" id="recovery-confirm-passphrase" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Confirm your new passphrase">
+                    </div>
+                </div>
+                
+                <button id="recover-account-btn" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-lg mb-4 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                    <i class="fas fa-key mr-2"></i>
+                    <span data-lang="recover_account">Recover Account</span>
+                </button>
+                
+                <div class="text-center">
+                    <button id="back-to-setup-2-btn" class="text-blue-500 hover:text-blue-600 text-sm" data-lang="back_to_setup">Back to Setup</button>
                 </div>
             </div>
         </div>
@@ -170,9 +247,17 @@
                                 <i class="fas fa-upload mr-2"></i>
                                 <span data-lang="import">Import Data</span>
                             </button>
+                            <button id="backup-phrase-btn" class="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                                <i class="fas fa-key mr-2"></i>
+                                <span data-lang="backup_phrase">Backup Phrase</span>
+                            </button>
                             <button id="about-btn" class="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
                                 <i class="fas fa-info-circle mr-2"></i>
                                 <span data-lang="about">About</span>
+                            </button>
+                            <button id="docs-btn" class="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                                <i class="fas fa-book mr-2"></i>
+                                <span data-lang="documentation">Documentation</span>
                             </button>
                         </div>
                     </div>
@@ -283,6 +368,161 @@
 
     <!-- Sidebar Overlay -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden"></div>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-2xl mx-4 max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white" data-lang="about">About</h2>
+                <button id="close-about-btn" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4 text-gray-700 dark:text-gray-300">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white" data-lang="app_title">Decentralized Notepad</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Version 1.0.0</p>
+                </div>
+                
+                <p data-lang="about_description">A privacy-focused decentralized notepad and todo application that runs entirely in your browser. Your data is encrypted and can optionally sync across devices using peer-to-peer technology.</p>
+                
+                <div class="grid grid-cols-2 gap-4 mt-6">
+                    <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-lock text-2xl text-blue-500 mb-2"></i>
+                        <h4 class="font-semibold mb-1" data-lang="feature_encryption">End-to-End Encryption</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400" data-lang="feature_encryption_desc">All data encrypted locally</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-wifi-slash text-2xl text-green-500 mb-2"></i>
+                        <h4 class="font-semibold mb-1" data-lang="feature_offline">Offline First</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400" data-lang="feature_offline_desc">Works without internet</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-share-alt text-2xl text-purple-500 mb-2"></i>
+                        <h4 class="font-semibold mb-1" data-lang="feature_p2p">P2P Sync</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400" data-lang="feature_p2p_desc">Decentralized synchronization</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-key text-2xl text-orange-500 mb-2"></i>
+                        <h4 class="font-semibold mb-1" data-lang="feature_recovery">Recovery Phrase</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400" data-lang="feature_recovery_desc">MetaMask-style backup</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
+                    <p class="text-sm text-center text-gray-600 dark:text-gray-400">
+                        Made with ❤️ for privacy and security
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Docs Modal -->
+    <div id="docs-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-4xl mx-4 max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white" data-lang="documentation">Documentation</h2>
+                <button id="close-docs-btn" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-6 text-gray-700 dark:text-gray-300">
+                
+                <section>
+                    <h3 class="text-lg font-bold mb-3 text-gray-800 dark:text-white" data-lang="getting_started">Getting Started</h3>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
+                            <h4 class="font-semibold mb-2" data-lang="step_1">1. Create Account</h4>
+                            <p class="text-sm" data-lang="step_1_desc">Click "Setup New Account" and create a secure passphrase or use the auto-generate feature.</p>
+                        </div>
+                        <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-500">
+                            <h4 class="font-semibold mb-2" data-lang="step_2">2. Save Recovery Phrase</h4>
+                            <p class="text-sm" data-lang="step_2_desc">Write down your 12-word recovery phrase and store it safely. You'll need it to recover your account.</p>
+                        </div>
+                        <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border-l-4 border-purple-500">
+                            <h4 class="font-semibold mb-2" data-lang="step_3">3. Start Creating</h4>
+                            <p class="text-sm" data-lang="step_3_desc">Create notes and todos. Everything is automatically encrypted and saved locally.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="text-lg font-bold mb-3 text-gray-800 dark:text-white" data-lang="features">Features</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <h4 class="font-semibold mb-2 flex items-center">
+                                <i class="fas fa-sticky-note text-blue-500 mr-2"></i>
+                                <span data-lang="notes_feature">Notes</span>
+                            </h4>
+                            <p class="text-sm" data-lang="notes_feature_desc">Create rich text notes with auto-save functionality.</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <h4 class="font-semibold mb-2 flex items-center">
+                                <i class="fas fa-tasks text-green-500 mr-2"></i>
+                                <span data-lang="todos_feature">To-Do Lists</span>
+                            </h4>
+                            <p class="text-sm" data-lang="todos_feature_desc">Manage tasks with priorities and due dates.</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <h4 class="font-semibold mb-2 flex items-center">
+                                <i class="fas fa-search text-purple-500 mr-2"></i>
+                                <span data-lang="search_feature">Search</span>
+                            </h4>
+                            <p class="text-sm" data-lang="search_feature_desc">Quickly find your notes and todos with full-text search.</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <h4 class="font-semibold mb-2 flex items-center">
+                                <i class="fas fa-download text-orange-500 mr-2"></i>
+                                <span data-lang="export_feature">Export/Import</span>
+                            </h4>
+                            <p class="text-sm" data-lang="export_feature_desc">Backup and restore your data in JSON format.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="text-lg font-bold mb-3 text-gray-800 dark:text-white" data-lang="keyboard_shortcuts">Keyboard Shortcuts</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">Ctrl + S</span>
+                                <span class="text-sm" data-lang="save_shortcut">Save current item</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">Ctrl + N</span>
+                                <span class="text-sm" data-lang="new_shortcut">Create new item</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">Ctrl + D</span>
+                                <span class="text-sm" data-lang="delete_shortcut">Delete current item</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">Ctrl + F</span>
+                                <span class="text-sm" data-lang="search_shortcut">Focus search</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="text-lg font-bold mb-3 text-gray-800 dark:text-white" data-lang="security">Security</h3>
+                    <div class="space-y-3">
+                        <p class="text-sm" data-lang="security_desc">Your data is protected using industry-standard AES encryption with PBKDF2 key derivation. All encryption happens locally in your browser.</p>
+                        <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-l-4 border-yellow-500">
+                            <p class="text-sm font-semibold mb-1" data-lang="security_warning">Important:</p>
+                            <p class="text-sm" data-lang="security_warning_desc">Keep your recovery phrase safe! If you lose it and forget your passphrase, your data cannot be recovered.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="js/crypto.js"></script>
