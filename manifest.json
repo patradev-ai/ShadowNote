@@ -1,0 +1,36 @@
+{
+  "name": "Decentralized Notepad",
+  "short_name": "DNote",
+  "description": "Privacy-focused decentralized notepad and todo app",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1f2937",
+  "theme_color": "#1f2937",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

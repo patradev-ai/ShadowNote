@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decentralized Notepad</title>
+    <meta name="description" content="Privacy-focused decentralized notepad and todo app">
+    <meta name="theme-color" content="#1f2937">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- CryptoJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
+    <!-- GUN.js -->
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p class="text-white text-lg" data-lang="loading">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Login/Setup Screen -->
+    <div id="auth-screen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-40 hidden">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white" data-lang="welcome">Welcome to Decentralized Notepad</h2>
+            
+            <div id="login-form">
+                <div class="mb-4">
+                    <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="passphrase">Passphrase:</label>
+                    <input type="password" id="passphrase-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Enter your passphrase">
+                </div>
+                
+                <button id="unlock-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md mb-4">
+                    <i class="fas fa-unlock mr-2"></i>
+                    <span data-lang="unlock">Unlock</span>
+                </button>
+                
+                <div class="text-center">
+                    <button id="setup-new-btn" class="text-blue-500 hover:text-blue-600 text-sm" data-lang="setup_new">Setup New Account</button>
+                </div>
+            </div>
+
+            <div id="setup-form" class="hidden">
+                <div class="mb-4">
+                    <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="create_passphrase">Create Passphrase:</label>
+                    <input type="password" id="new-passphrase-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Create a strong passphrase">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="confirm_passphrase">Confirm Passphrase:</label>
+                    <input type="password" id="confirm-passphrase-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Confirm your passphrase">
+                </div>
+                
+                <button id="create-account-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md mb-4">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span data-lang="create_account">Create Account</span>
+                </button>
+                
+                <div class="text-center">
+                    <button id="back-to-login-btn" class="text-blue-500 hover:text-blue-600 text-sm" data-lang="back_to_login">Back to Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="hidden">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <button id="sidebar-toggle" class="lg:hidden mr-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <h1 class="text-xl font-bold text-gray-800 dark:text-white">
+                            <i class="fas fa-shield-alt mr-2 text-blue-500"></i>
+                            <span data-lang="app_title">Decentralized Notepad</span>
+                        </h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Theme Toggle -->
+                        <button id="theme-toggle" class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                            <i class="fas fa-moon dark:hidden"></i>
+                            <i class="fas fa-sun hidden dark:block"></i>
+                        </button>
+                        
+                        <!-- Language Toggle -->
+                        <button id="language-toggle" class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                            <i class="fas fa-globe mr-1"></i>
+                            <span id="current-lang">EN</span>
+                        </button>
+                        
+                        <!-- Sync Status -->
+                        <div id="sync-status" class="flex items-center">
+                            <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400" data-lang="offline">Offline</span>
+                        </div>
+                        
+                        <!-- Lock Button -->
+                        <button id="lock-btn" class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                            <i class="fas fa-lock"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex h-screen">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="w-64 bg-white dark:bg-gray-800 shadow-sm border-r border-gray-200 dark:border-gray-700 -translate-x-full lg:translate-x-0 transition-transform duration-300 fixed lg:relative z-30 h-full">
+                <div class="p-4">
+                    <!-- Tab Navigation -->
+                    <div class="flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1 mb-4">
+                        <button id="notes-tab" class="flex-1 py-2 px-3 text-sm font-medium rounded-md bg-white dark:bg-gray-600 text-gray-700 dark:text-white shadow-sm">
+                            <i class="fas fa-sticky-note mr-2"></i>
+                            <span data-lang="notes">Notes</span>
+                        </button>
+                        <button id="todos-tab" class="flex-1 py-2 px-3 text-sm font-medium rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                            <i class="fas fa-tasks mr-2"></i>
+                            <span data-lang="todos">To-do</span>
+                        </button>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="mb-4">
+                        <div class="relative">
+                            <input type="text" id="search-input" class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Search...">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <!-- Add Button -->
+                    <button id="add-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md mb-4">
+                        <i class="fas fa-plus mr-2"></i>
+                        <span data-lang="add_new">Add New</span>
+                    </button>
+
+                    <!-- Items List -->
+                    <div id="items-list" class="space-y-2 max-h-96 overflow-y-auto">
+                        <!-- Dynamic content -->
+                    </div>
+
+                    <!-- Settings Menu -->
+                    <div class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="space-y-2">
+                            <button id="export-btn" class="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                                <i class="fas fa-download mr-2"></i>
+                                <span data-lang="export">Export Data</span>
+                            </button>
+                            <button id="import-btn" class="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                                <i class="fas fa-upload mr-2"></i>
+                                <span data-lang="import">Import Data</span>
+                            </button>
+                            <button id="about-btn" class="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <span data-lang="about">About</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 overflow-hidden">
+                <!-- Welcome Screen -->
+                <div id="welcome-content" class="h-full flex items-center justify-center p-8">
+                    <div class="text-center max-w-md">
+                        <div class="text-6xl mb-4">📝</div>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4" data-lang="welcome_title">Welcome to your secure notepad</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mb-8" data-lang="welcome_subtitle">Create your first note or to-do item to get started</p>
+                        <button id="create-first-note" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg">
+                            <i class="fas fa-plus mr-2"></i>
+                            <span data-lang="create_first_note">Create First Note</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Note Editor -->
+                <div id="note-editor" class="hidden h-full flex flex-col">
+                    <div class="flex-1 flex flex-col p-6">
+                        <div class="mb-4">
+                            <input type="text" id="note-title" class="w-full text-2xl font-bold border-none outline-none bg-transparent text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" placeholder="Note title...">
+                        </div>
+                        
+                        <div class="flex-1 mb-4">
+                            <textarea id="note-content" class="w-full h-full border border-gray-300 dark:border-gray-600 rounded-md p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none" placeholder="Start writing your note..."></textarea>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <span data-lang="last_modified">Last modified:</span> <span id="note-modified">-</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="save-note-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md">
+                                    <i class="fas fa-save mr-2"></i>
+                                    <span data-lang="save">Save</span>
+                                </button>
+                                <button id="delete-note-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md">
+                                    <i class="fas fa-trash mr-2"></i>
+                                    <span data-lang="delete">Delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Todo Editor -->
+                <div id="todo-editor" class="hidden h-full flex flex-col">
+                    <div class="flex-1 flex flex-col p-6">
+                        <div class="mb-4">
+                            <input type="text" id="todo-title" class="w-full text-2xl font-bold border-none outline-none bg-transparent text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" placeholder="Task title...">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <textarea id="todo-description" class="w-full h-32 border border-gray-300 dark:border-gray-600 rounded-md p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none" placeholder="Task description..."></textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="due_date">Due Date:</label>
+                                <input type="date" id="todo-due-date" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" data-lang="priority">Priority:</label>
+                                <select id="todo-priority" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                                    <option value="low" data-lang="priority_low">Low</option>
+                                    <option value="medium" data-lang="priority_medium">Medium</option>
+                                    <option value="high" data-lang="priority_high">High</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <span data-lang="created">Created:</span> <span id="todo-created">-</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="save-todo-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md">
+                                    <i class="fas fa-save mr-2"></i>
+                                    <span data-lang="save">Save</span>
+                                </button>
+                                <button id="delete-todo-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md">
+                                    <i class="fas fa-trash mr-2"></i>
+                                    <span data-lang="delete">Delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- File Input for Import -->
+    <input type="file" id="import-file-input" accept=".json" class="hidden">
+
+    <!-- Notification -->
+    <div id="notification" class="fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <div class="flex items-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            <span id="notification-message"></span>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden"></div>
+
+    <!-- Scripts -->
+    <script src="js/crypto.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/language.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/notes.js"></script>
+    <script src="js/todos.js"></script>
+    <script src="js/pwa.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
